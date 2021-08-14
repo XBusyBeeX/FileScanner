@@ -28,7 +28,7 @@ bool FileMapping::open(const DesiredAccess& access)
 
 	m_handle = CreateFileA(
 					m_filename.c_str(),
-					GENERIC_READ,
+					DWORD(access),
 					0,
 					nullptr,
 					OPEN_ALWAYS,
@@ -60,7 +60,7 @@ bool FileMapping::open(const DesiredAccess& access)
 
 bool FileMapping::mapping()
 {
-	if (!m_size)
+	if (!m_size || !m_handle)
 	{
 		unmap();
 		return false;
@@ -112,7 +112,7 @@ bool FileMapping::mapping()
 
 bool FileMapping::view(const unsigned long long& offset, const unsigned long& size)
 {
-	if (!size)
+	if (!size || !m_handle)
 		return false;
 
 	unsigned long sz = size;

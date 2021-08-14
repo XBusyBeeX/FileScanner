@@ -19,6 +19,8 @@ FilesScannerResult FilesScanner::scan(const FilesEnumeratorResult& fenumResult)
     result.path = fenumResult.path;
     result.crc = FilesScanner::crc32(static_cast<unsigned char*>(m_fileMap.data()), size_t(m_fileMap.size()));
 
+    m_fileMap.close();
+
     return result;
 }
 
