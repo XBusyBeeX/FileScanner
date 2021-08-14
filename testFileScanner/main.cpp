@@ -153,6 +153,9 @@ int main(int argc, char* argv[])
 
 	tm = clock() - tm;
 
+	delete fenum;
+	delete[] fscan;
+
 	std::cout << "time: " << tm << "ms." << std::endl;
 	std::cout << "count files: " << count_files << std::endl;
 

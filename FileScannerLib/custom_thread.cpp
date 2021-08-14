@@ -25,5 +25,10 @@ bool custom_thread::running()
 custom_thread::~custom_thread()
 {
 	if (m_thr)
+	{
+		while (running());
+		m_thr->detach();
 		delete m_thr;
+	}
+		
 }
