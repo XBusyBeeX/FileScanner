@@ -162,6 +162,7 @@ int main(int argc, char* argv[])
 
 	} while (isRunning);
 
+	tm = clock() - tm;
 	
 	for (thr_num = 0; thr_num < count_threads; thr_num++)
 	{
@@ -177,7 +178,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	tm = clock() - tm;
+
 
 
 	delete fenum;
