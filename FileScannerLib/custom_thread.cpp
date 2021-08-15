@@ -11,7 +11,7 @@ void custom_thread::start()
 	m_thr = new std::thread([this]()
 		{
 			m_isRunning.store(true);
-			run();
+			this->run();
 			m_isRunning.store(false);
 		});
 }

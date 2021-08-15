@@ -28,6 +28,9 @@
 using namespace std;
 #pragma comment (lib, "FileScannerLib.lib")
 
+
+
+
 int main(int argc, char* argv[])
 {
 
@@ -40,7 +43,7 @@ int main(int argc, char* argv[])
 	FilesEnumerator *fenum = new FilesEnumerator;
 	FilesScanner *fscan = nullptr;
 	bool isRunning = false;
-	int count_files = 0;
+	int count_files = 0, count_files_enums = 0;
 
 	long tm;
 
@@ -118,26 +121,34 @@ int main(int argc, char* argv[])
 	{
 		isRunning = fenum->running();
 
-		for (int i = 0; i < count_threads; i++)
+		if (!isRunning)
 		{
-			if (!isRunning)
-				fscan[i].stop();
+			for (int i = 0; i < count_threads; i++)
+			{
+				if (!isRunning)
+					fscan[i].stop();
 
-			if (
-				(isRunning = (fscan[i].running() || fscan[i].waiting()))
-				)
-				break;
+				if (
+					(isRunning = (fscan[i].running() || fscan[i].waiting()))
+					)
+					break;
+			}
 		}
-
+		
+		while(!fenum->isEmpty())
 		{
 			FilesEnumeratorResult result = fenum->get();
 
 			if (result.size)
+			{
 				fscan[thr_num].append(result);
+				count_files_enums++;
+			}
 		}
 
+		while(!fscan[thr_num].isEmpty())
 		{
-			FilesScannerResult result = fscan->get();
+			FilesScannerResult result = fscan[thr_num].get();
 
 			if (result.crc)
 			{
@@ -151,7 +162,23 @@ int main(int argc, char* argv[])
 
 	} while (isRunning);
 
+	
+	for (thr_num = 0; thr_num < count_threads; thr_num++)
+	{
+		while (!fscan[thr_num].isEmpty())
+		{
+			FilesScannerResult result = fscan[thr_num].get();
+
+			if (result.crc)
+			{
+				outFile << "\"" << result.path << "\"," << std::to_string(result.crc) << std::endl;
+				count_files++;
+			}
+		}
+	}
+
 	tm = clock() - tm;
+
 
 	delete fenum;
 	delete[] fscan;

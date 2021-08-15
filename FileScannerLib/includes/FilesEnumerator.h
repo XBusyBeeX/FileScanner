@@ -20,11 +20,12 @@ class FilesEnumerator : private custom_thread, private custom_queue<FilesEnumera
 public:
 	void append(const std::string& path) { m_dirs.push(path); }
 	FilesEnumeratorResult get() { return !empty() ? pop() : FilesEnumeratorResult(); }
-	void enumerateProcess();
 
 	void start() { m_running.store(true); static_cast<custom_thread*>(this)->start(); }
 
 	bool running() { return m_running.load(); }
+
+	bool isEmpty() { return empty(); }
 
 private:
 	void enumerate(const std::string &);

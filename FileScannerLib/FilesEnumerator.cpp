@@ -2,17 +2,6 @@
 #include <filesystem>
 
 
-void FilesEnumerator::enumerateProcess()
-{
-	m_running.store(true);
-
-	while (!m_dirs.empty())
-		enumerate(m_dirs.pop());
-
-	m_running.store(false);
-}
-
-
 void FilesEnumerator::enumerate(const std::string& path)
 {
 	FilesEnumeratorResult res;
@@ -39,5 +28,10 @@ void FilesEnumerator::enumerate(const std::string& path)
 
 void FilesEnumerator::run()
 {
-	enumerateProcess();
+	m_running.store(true);
+
+	while (!m_dirs.empty())
+		enumerate(m_dirs.pop());
+
+	m_running.store(false);
 }
